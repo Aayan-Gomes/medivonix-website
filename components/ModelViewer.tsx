@@ -30,6 +30,11 @@ type MachineProps = {
 
 const coverMeshNames = new Set(["Node1", "Node4", "Node5"]);
 const topPlateMeshNames = new Set(["Node10", "Node14", "Node17", "Node31"]);
+const productModelRotation: [number, number, number] = [
+  -0.62,
+  Math.PI - 0.72,
+  -0.16,
+];
 
 function getMaterialColor(material: THREE.Material | undefined) {
   const encodedColor = material?.name.match(/^FF([0-9A-Fa-f]{6})$/)?.[1];
@@ -147,7 +152,7 @@ function Machine({ animateAssembly = false, insideView = false }: MachineProps) 
 
   return (
     <Center>
-      <group rotation={[0, Math.PI, 0]}>
+      <group rotation={productModelRotation}>
         <primitive object={model} />
       </group>
     </Center>
@@ -170,9 +175,9 @@ function MuseumRig({
     const assemblyProgress = Math.min(elapsed / 2.4, 1);
     const rotationProgress = Math.max(elapsed - 1.8, 0);
 
-    ref.current.rotation.y =
-      Math.PI * assemblyProgress + rotationProgress * 0.22;
-    ref.current.rotation.x = -0.08;
+    ref.current.rotation.y = 0.05 * assemblyProgress + rotationProgress * 0.035;
+    ref.current.rotation.x = 0.2;
+    ref.current.rotation.z = -0.04;
   });
 
   return <group ref={ref}>{children}</group>;
@@ -219,8 +224,8 @@ export default function ModelViewer({
       )}
       <Canvas
         camera={{
-          position: isHero ? [14, 9, 22] : [12, 10, 16],
-          fov: isHero ? 42 : 38,
+          position: isHero ? [10, 14, 24] : [10, 14, 24],
+          fov: isHero ? 42 : 42,
         }}
       >
         <color attach="background" args={["#f1f5f9"]} />
@@ -247,7 +252,7 @@ export default function ModelViewer({
             fit
             clip
             observe
-            margin={isHero ? 2.35 : 1.25}
+            margin={isHero ? 2.35 : 2.05}
           >
             <MuseumRig enabled={isHero}>
               <Machine animateAssembly={isHero} insideView={insideView} />
