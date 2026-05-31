@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import ContactForm from "../components/ContactForm";
 import Navbar from "../components/Navbar";
 import { products } from "./data/products";
 
@@ -266,7 +267,7 @@ export default function Home() {
         </section>
 
         <footer id="contact" className="bg-slate-950 py-16 text-white">
-          <div className="mx-auto grid max-w-7xl gap-10 px-5 sm:px-8 lg:grid-cols-[1fr_1fr]">
+          <div className="mx-auto grid max-w-7xl gap-10 px-5 sm:px-8 lg:grid-cols-[0.9fr_1.1fr]">
             <div>
               <p className="text-sm font-bold uppercase tracking-[0.2em] text-teal-300">
                 Contact
@@ -274,25 +275,36 @@ export default function Home() {
               <h2 className="mt-4 text-3xl font-black sm:text-5xl">
                 Let us discuss clinical needs, partnerships, or product demos.
               </h2>
+              <p className="mt-6 max-w-xl leading-8 text-slate-300">
+                Share your details and what you need. We can reply by WhatsApp,
+                email, phone, or the contact method you mention.
+              </p>
+
+              <div className="mt-8 grid gap-4 text-slate-200">
+                <div>
+                  <p className="font-bold text-white">
+                    Medivonix Healthcare Solutions
+                  </p>
+                  <p className="mt-2 leading-7">
+                    226 Bosepukur Prantick Pally, Kolkata - 700042
+                  </p>
+                </div>
+                <a
+                  href="mailto:contact@medivonixhealthcare.com"
+                  className="font-bold text-teal-200 hover:text-white"
+                >
+                  contact@medivonixhealthcare.com
+                </a>
+                <a
+                  href="tel:+919477348046"
+                  className="font-bold text-teal-200 hover:text-white"
+                >
+                  +91 9477348046
+                </a>
+              </div>
             </div>
 
-            <div className="grid gap-4 text-slate-200">
-              <div>
-                <p className="font-bold text-white">Medivonix Healthcare Solutions</p>
-                <p className="mt-2 leading-7">
-                  226 Bosepukur Prantick Pally, Kolkata - 700042
-                </p>
-              </div>
-              <a
-                href="mailto:contact@medivonixhealthcare.com"
-                className="font-bold text-teal-200 hover:text-white"
-              >
-                contact@medivonixhealthcare.com
-              </a>
-              <a href="tel:+919477348046" className="font-bold text-teal-200 hover:text-white">
-                +91 9477348046
-              </a>
-            </div>
+            <ContactForm />
           </div>
         </footer>
       </main>
