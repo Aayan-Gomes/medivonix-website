@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import ContactForm from "../components/ContactForm";
+import ModelViewer from "../components/ModelViewer";
 import Navbar from "../components/Navbar";
 import { products } from "./data/products";
 
@@ -78,14 +79,7 @@ export default function Home() {
             </div>
 
             <div className="relative min-h-[440px] overflow-hidden rounded-lg border border-slate-200 bg-slate-100">
-              <Image
-                src="/products/product1.jpeg"
-                alt="Medivonix exchange blood transfusion machine prototype"
-                fill
-                priority
-                className="object-cover"
-                sizes="(min-width: 1024px) 46vw, 100vw"
-              />
+              <ModelViewer variant="hero" />
               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/85 to-transparent p-6 text-white sm:p-8">
                 <p className="text-sm font-bold uppercase tracking-[0.18em] text-teal-200">
                   Flagship development
@@ -276,8 +270,8 @@ export default function Home() {
                 Let us discuss clinical needs, partnerships, or product demos.
               </h2>
               <p className="mt-6 max-w-xl leading-8 text-slate-300">
-                Share your details and what you need. We can reply by WhatsApp,
-                email, phone, or the contact method you mention.
+                Share your details and what you need. Every enquiry is addressed
+                to our company inbox for follow-up by the Medivonix team.
               </p>
 
               <div className="mt-8 grid gap-4 text-slate-200">

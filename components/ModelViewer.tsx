@@ -1,38 +1,72 @@
 "use client";
 
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useFrame } from "@react-three/fiber";
 import {
+  Bounds,
+  Center,
   OrbitControls,
   Environment,
   useGLTF,
 } from "@react-three/drei";
-import { useEffect, useMemo, useRef } from "react";
+import {
+  Suspense,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import type { ReactNode } from "react";
 import * as THREE from "three";
 
-function Machine() {
+type ModelViewerProps = {
+  variant?: "product" | "hero";
+  allowInsideView?: boolean;
+};
+
+type MachineProps = {
+  animateAssembly?: boolean;
+  insideView?: boolean;
+};
+
+const coverMeshNames = new Set(["Node1", "Node4", "Node5"]);
+const topPlateMeshNames = new Set(["Node10", "Node14", "Node17", "Node31"]);
+
+function getMaterialColor(material: THREE.Material | undefined) {
+  const encodedColor = material?.name.match(/^FF([0-9A-Fa-f]{6})$/)?.[1];
+
+  if (encodedColor) {
+    return new THREE.Color(`#${encodedColor}`);
+  }
+
+  if (
+    material instanceof THREE.MeshStandardMaterial ||
+    material instanceof THREE.MeshPhongMaterial ||
+    material instanceof THREE.MeshBasicMaterial ||
+    material instanceof THREE.MeshLambertMaterial
+  ) {
+    return material.color.clone();
+  }
+
+  return new THREE.Color("#d8dde2");
+}
+
+function Machine({ animateAssembly = false, insideView = false }: MachineProps) {
   const { scene } = useGLTF("/models/exchange-machine.glb");
   const model = useMemo(() => scene.clone(true), [scene]);
-  const ref = useRef<THREE.Group>(null);
 
-  useEffect(() => {
-    if (!ref.current) return;
-
+  useLayoutEffect(() => {
     const materialCache = new Map<string, THREE.MeshStandardMaterial>();
 
-    ref.current.traverse((object) => {
+    model.traverse((object) => {
       if (!(object instanceof THREE.Mesh)) return;
 
       const source = Array.isArray(object.material)
         ? object.material[0]
         : object.material;
-      const key = source?.name || object.uuid;
-      const sourceColor =
-        source instanceof THREE.MeshStandardMaterial ||
-        source instanceof THREE.MeshPhongMaterial ||
-        source instanceof THREE.MeshBasicMaterial ||
-        source instanceof THREE.MeshLambertMaterial
-          ? source.color
-          : new THREE.Color("#d8dde2");
+      const isCoverMesh = coverMeshNames.has(object.name);
+      const isTopPlateMesh = topPlateMeshNames.has(object.name);
+      const key = `${source?.name || object.uuid}-${insideView && isCoverMesh ? "ghost" : "solid"}`;
+      const sourceColor = getMaterialColor(source);
 
       if (!materialCache.has(key)) {
         materialCache.set(
@@ -41,7 +75,10 @@ function Machine() {
             name: key,
             color: sourceColor.clone(),
             metalness: 0.05,
-            roughness: 0.42,
+            roughness: insideView && isCoverMesh ? 0.18 : 0.42,
+            transparent: insideView && isCoverMesh,
+            opacity: insideView && isCoverMesh ? 0.16 : 1,
+            depthWrite: !(insideView && isCoverMesh),
             side: THREE.DoubleSide,
           }),
         );
@@ -49,38 +86,141 @@ function Machine() {
 
       object.material = materialCache.get(key)!;
       object.geometry.computeVertexNormals();
+      object.visible = !(insideView && isTopPlateMesh);
     });
 
-    const box = new THREE.Box3().setFromObject(ref.current);
+    if (!animateAssembly) return;
+
+    const box = new THREE.Box3().setFromObject(model);
     const center = box.getCenter(new THREE.Vector3());
+    let index = 0;
 
-    ref.current.position.x -= center.x;
-    ref.current.position.y -= center.y;
-    ref.current.position.z -= center.z;
+    model.traverse((object) => {
+      if (!(object instanceof THREE.Mesh)) return;
 
-    const size = box.getSize(new THREE.Vector3());
-    const maxDim = Math.max(size.x, size.y, size.z);
+      const finalPosition = object.position.clone();
+      const worldPosition = object.getWorldPosition(new THREE.Vector3());
+      const direction = worldPosition.sub(center);
 
-    if (maxDim > 10) {
-      const scale = 10 / maxDim;
-      ref.current.scale.setScalar(scale);
-    }
-  }, [model]);
+      if (direction.lengthSq() < 0.001) {
+        direction.set(
+          Math.sin(index * 1.7),
+          Math.cos(index * 2.1),
+          Math.sin(index * 2.6),
+        );
+      }
+
+      direction.normalize().multiplyScalar(26);
+
+      object.userData.finalPosition = finalPosition;
+      object.userData.startPosition = finalPosition.clone().add(direction);
+      object.position.copy(object.userData.startPosition);
+      index += 1;
+    });
+  }, [animateAssembly, insideView, model]);
+
+  useFrame(({ clock }) => {
+    if (!animateAssembly) return;
+
+    const progress = Math.min(clock.getElapsedTime() / 2.4, 1);
+    const easedProgress = 1 - Math.pow(1 - progress, 3);
+
+    model.traverse((object) => {
+      if (!(object instanceof THREE.Mesh)) return;
+
+      const startPosition = object.userData.startPosition as
+        | THREE.Vector3
+        | undefined;
+      const finalPosition = object.userData.finalPosition as
+        | THREE.Vector3
+        | undefined;
+
+      if (!startPosition || !finalPosition) return;
+
+      object.position.lerpVectors(
+        startPosition,
+        finalPosition,
+        easedProgress,
+      );
+    });
+  });
 
   return (
-    <group ref={ref}>
-      <primitive object={model} />
-    </group>
+    <Center>
+      <group rotation={[0, Math.PI, 0]}>
+        <primitive object={model} />
+      </group>
+    </Center>
   );
 }
 
-export default function ModelViewer() {
+function MuseumRig({
+  children,
+  enabled,
+}: {
+  children: ReactNode;
+  enabled: boolean;
+}) {
+  const ref = useRef<THREE.Group>(null);
+
+  useFrame(({ clock }) => {
+    if (!ref.current || !enabled) return;
+
+    const elapsed = clock.getElapsedTime();
+    const assemblyProgress = Math.min(elapsed / 2.4, 1);
+    const rotationProgress = Math.max(elapsed - 1.8, 0);
+
+    ref.current.rotation.y =
+      Math.PI * assemblyProgress + rotationProgress * 0.22;
+    ref.current.rotation.x = -0.08;
+  });
+
+  return <group ref={ref}>{children}</group>;
+}
+
+export default function ModelViewer({
+  variant = "product",
+  allowInsideView = false,
+}: ModelViewerProps) {
+  const isHero = variant === "hero";
+  const [insideView, setInsideView] = useState(false);
+
   return (
-    <div className="h-[700px] w-full overflow-hidden rounded-lg bg-slate-100">
+    <div
+      className={`relative w-full overflow-hidden rounded-lg bg-slate-100 ${
+        isHero ? "h-full min-h-[440px]" : "h-[700px]"
+      }`}
+    >
+      {allowInsideView && (
+        <div className="absolute left-4 top-4 z-10 flex rounded-full border border-slate-300 bg-white/90 p-1 shadow-lg shadow-slate-900/10 backdrop-blur">
+          <button
+            type="button"
+            onClick={() => setInsideView(false)}
+            className={`rounded-full px-4 py-2 text-sm font-black transition ${
+              insideView
+                ? "text-slate-600 hover:text-slate-950"
+                : "bg-slate-950 text-white"
+            }`}
+          >
+            Exterior
+          </button>
+          <button
+            type="button"
+            onClick={() => setInsideView(true)}
+            className={`rounded-full px-4 py-2 text-sm font-black transition ${
+              insideView
+                ? "bg-teal-500 text-white"
+                : "text-slate-600 hover:text-slate-950"
+            }`}
+          >
+            See inside
+          </button>
+        </div>
+      )}
       <Canvas
         camera={{
-          position: [0, 5, 18],
-          fov: 38,
+          position: isHero ? [14, 9, 22] : [12, 10, 16],
+          fov: isHero ? 42 : 38,
         }}
       >
         <color attach="background" args={["#f1f5f9"]} />
@@ -101,16 +241,30 @@ export default function ModelViewer() {
 
         <Environment preset="studio" />
 
-        <Machine />
+        <Suspense fallback={null}>
+          <Bounds
+            key={insideView ? "inside" : "exterior"}
+            fit
+            clip
+            observe
+            margin={isHero ? 2.35 : 1.25}
+          >
+            <MuseumRig enabled={isHero}>
+              <Machine animateAssembly={isHero} insideView={insideView} />
+            </MuseumRig>
+          </Bounds>
+        </Suspense>
 
-        <OrbitControls
-          makeDefault
-          enablePan={false}
-          minDistance={5}
-          maxDistance={50}
-          autoRotate
-          autoRotateSpeed={0.5}
-        />
+        {!isHero && (
+          <OrbitControls
+            makeDefault
+            enablePan={false}
+            minDistance={5}
+            maxDistance={50}
+            autoRotate
+            autoRotateSpeed={0.5}
+          />
+        )}
       </Canvas>
     </div>
   );

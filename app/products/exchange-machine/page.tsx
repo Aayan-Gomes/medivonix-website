@@ -66,7 +66,7 @@ export default function ExchangeMachine() {
               Interactive machine visualization
             </h2>
           </div>
-          <ModelViewer />
+          <ModelViewer allowInsideView />
         </section>
 
         <section className="border-y border-slate-200 bg-slate-50 py-16">
