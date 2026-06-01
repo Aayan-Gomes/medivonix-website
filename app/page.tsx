@@ -8,7 +8,7 @@ import { products } from "./data/products";
 const focusAreas = [
   {
     title: "Neonatal Care",
-    copy: "Devices centered on jaundice care, exchange transfusion workflows, and newborn critical care needs.",
+    copy: "Devices centered on jaundice care, infusion support, exchange transfusion workflows, and newborn critical care needs.",
   },
   {
     title: "Affordable Access",
@@ -85,10 +85,10 @@ export default function Home() {
                   Flagship development
                 </p>
                 <h2 className="mt-3 text-2xl font-black">
-                  Exchange Blood Transfusion Machine
+                  BiliDrop
                 </h2>
                 <p className="mt-2 max-w-xl text-sm leading-6 text-slate-200">
-                  Automated workflow support for neonatal critical care teams.
+                  Infusion pump platform capable of exchange transfusion.
                 </p>
               </div>
             </div>

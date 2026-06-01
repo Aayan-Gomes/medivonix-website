@@ -17,31 +17,31 @@ export type Product = {
 export const products: Product[] = [
   {
     slug: "exchange-machine",
-    name: "Exchange Blood Transfusion Machine",
-    eyebrow: "Flagship neonatal critical care platform",
+    name: "BiliDrop",
+    eyebrow: "Infusion pump capable of exchange transfusion",
     summary:
-      "Automated neonatal exchange transfusion support designed for precision, repeatability, and safer workflow control.",
+      "A programmable infusion and exchange-transfusion platform designed for precise syringe displacement, fluid routing, and repeatable workflow control.",
     description:
-      "A compact system concept for neonatal exchange transfusion that helps care teams manage controlled blood exchange with improved procedural consistency, monitoring visibility, and accessibility for high-pressure clinical settings.",
+      "BiliDrop is a microcontroller-based automated fluid handling platform designed to support controlled exchange transfusion workflows and precision syringe-pump infusion through a programmable electromechanical architecture.",
     image: "/products/product1.jpeg",
-    imageAlt: "Exchange blood transfusion machine prototype",
+    imageAlt: "BiliDrop infusion pump prototype capable of exchange transfusion",
     mediaStatus: "Prototype imagery available",
     status: "Prototype development",
     href: "/products/exchange-machine",
     highlights: [
-      "Controlled exchange workflow for neonatal critical care",
-      "Designed around precision, safety checks, and affordability",
+      "Programmable exchange transfusion and syringe-pump infusion modes",
+      "Designed around precise syringe displacement and automated fluid routing",
       "3D product visualization available for stakeholder demos",
     ],
     specs: [
-      { label: "Care area", value: "Neonatal intensive care" },
-      { label: "Focus", value: "Exchange transfusion support" },
-      { label: "Design goal", value: "Precision with accessible deployment" },
+      { label: "Platform", value: "Automated fluid handling" },
+      { label: "Focus", value: "Infusion and exchange transfusion workflows" },
+      { label: "Control", value: "Microcontroller-based architecture" },
     ],
     applications: [
-      "Severe neonatal jaundice management",
-      "NICU critical care workflows",
-      "Clinical education and procedure planning",
+      "Exchange transfusion workflow development",
+      "Programmable syringe-pump infusion",
+      "Clinical education, research, and procedure planning",
     ],
   },
   {
@@ -107,15 +107,15 @@ export function getProduct(slug: string) {
 export const exchangeMachineGallery = [
   {
     src: "/products/product1.jpeg",
-    alt: "Exchange blood transfusion machine enclosure prototype",
+    alt: "BiliDrop enclosure prototype",
   },
   {
     src: "/products/product2.jpeg",
-    alt: "Exchange blood transfusion machine internal prototype view",
+    alt: "BiliDrop internal prototype view",
   },
   {
     src: "/products/product3.jpeg",
-    alt: "Exchange blood transfusion machine assembly detail",
+    alt: "BiliDrop assembly detail",
   },
 ];
 

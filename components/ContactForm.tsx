@@ -9,6 +9,10 @@ export default function ContactForm() {
   const [name, setName] = useState("");
   const [contactDetail, setContactDetail] = useState("");
   const [description, setDescription] = useState("");
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">(
+    "idle",
+  );
+  const [notice, setNotice] = useState("");
 
   function buildMessage() {
     return [
@@ -22,13 +26,47 @@ export default function ContactForm() {
     ].join("\n");
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-
+  function openEmailFallback() {
     const message = buildMessage();
     const subject = encodeURIComponent(`Medivonix enquiry from ${name}`);
     const body = encodeURIComponent(message);
     window.location.href = `mailto:${companyEmail}?subject=${subject}&body=${body}`;
+  }
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setStatus("sending");
+    setNotice("");
+
+    try {
+      const response = await fetch("/api/enquiry", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          contactDetail,
+          description,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Request failed");
+      }
+
+      setStatus("sent");
+      setNotice("Thank you. Your enquiry has been sent to Medivonix.");
+      setName("");
+      setContactDetail("");
+      setDescription("");
+    } catch {
+      setStatus("error");
+      setNotice(
+        "Direct website email is not configured yet. Opening your email app instead.",
+      );
+      openEmailFallback();
+    }
   }
 
   return (
@@ -76,12 +114,25 @@ export default function ContactForm() {
 
       <button
         type="submit"
+        disabled={status === "sending"}
         className="mt-5 flex w-full items-center justify-center gap-2 rounded-md bg-teal-400 px-5 py-4 font-black text-slate-950 transition hover:bg-teal-300"
       >
         <Mail aria-hidden="true" className="h-5 w-5" />
         <Send aria-hidden="true" className="h-4 w-4" />
-        Send enquiry
+        {status === "sending" ? "Sending..." : "Send enquiry"}
       </button>
+
+      {notice && (
+        <p
+          className={`mt-4 rounded-md px-4 py-3 text-sm font-bold ${
+            status === "sent"
+              ? "bg-teal-300/15 text-teal-100"
+              : "bg-white/10 text-slate-100"
+          }`}
+        >
+          {notice}
+        </p>
+      )}
     </form>
   );
 }
