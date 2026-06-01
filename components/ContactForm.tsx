@@ -33,6 +33,14 @@ export default function ContactForm() {
     window.location.href = `mailto:${companyEmail}?subject=${subject}&body=${body}`;
   }
 
+  async function readErrorMessage(response: Response) {
+    const body = (await response.json().catch(() => null)) as {
+      error?: string;
+    } | null;
+
+    return body?.error ?? "We could not send this enquiry. Please try again.";
+  }
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setStatus("sending");
@@ -52,7 +60,15 @@ export default function ContactForm() {
       });
 
       if (!response.ok) {
-        throw new Error("Request failed");
+        const errorMessage = await readErrorMessage(response);
+        setStatus("error");
+        setNotice(errorMessage);
+
+        if (response.status >= 500) {
+          openEmailFallback();
+        }
+
+        return;
       }
 
       setStatus("sent");
@@ -63,7 +79,7 @@ export default function ContactForm() {
     } catch {
       setStatus("error");
       setNotice(
-        "Direct website email is not configured yet. Opening your email app instead.",
+        "Network issue while sending. Opening your email app instead.",
       );
       openEmailFallback();
     }
@@ -79,6 +95,7 @@ export default function ContactForm() {
           Name
           <input
             required
+            minLength={2}
             value={name}
             onChange={(event) => setName(event.target.value)}
             autoComplete="name"
@@ -91,6 +108,7 @@ export default function ContactForm() {
           Phone number or email
           <input
             required
+            minLength={5}
             value={contactDetail}
             onChange={(event) => setContactDetail(event.target.value)}
             autoComplete="email"
@@ -104,6 +122,7 @@ export default function ContactForm() {
         Enquiry
         <textarea
           required
+          minLength={10}
           value={description}
           onChange={(event) => setDescription(event.target.value)}
           rows={5}

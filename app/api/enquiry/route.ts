@@ -33,7 +33,10 @@ export async function POST(request: Request) {
   const parsed = enquirySchema.safeParse(await request.json().catch(() => null));
 
   if (!parsed.success) {
-    return Response.json({ error: "Invalid enquiry." }, { status: 400 });
+    return Response.json(
+      { error: "Please add your name, contact detail, and a short enquiry." },
+      { status: 400 },
+    );
   }
 
   const { name, contactDetail, description } = parsed.data;
@@ -72,7 +75,7 @@ export async function POST(request: Request) {
 
   if (!response.ok) {
     return Response.json(
-      { error: "Email delivery failed." },
+      { error: "Email delivery failed. Please try again in a moment." },
       { status: 502 },
     );
   }
