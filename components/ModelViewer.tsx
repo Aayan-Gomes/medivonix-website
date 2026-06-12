@@ -23,7 +23,7 @@ type ModelViewerProps = {
   allowInsideView?: boolean;
   modelPath?: string;
   modelRotation?: [number, number, number];
-  modelFocus?: "all" | "handheld";
+  modelFocus?: "all" | "phototherapy" | "handheld";
 };
 
 type MachineProps = {
@@ -31,7 +31,7 @@ type MachineProps = {
   insideView?: boolean;
   modelPath: string;
   modelRotation: [number, number, number];
-  modelFocus: "all" | "handheld";
+  modelFocus: "all" | "phototherapy" | "handheld";
 };
 
 const coverMeshNames = new Set(["Node1", "Node4", "Node5"]);
@@ -77,6 +77,21 @@ function Machine({
         if (child.name !== "Photodiode_device_assembly_v3") {
           clone.remove(child);
         }
+      }
+    }
+
+    if (modelFocus === "phototherapy") {
+      const handheld = clone.getObjectByName("Photodiode_device_assembly_v3");
+      handheld?.removeFromParent();
+
+      const probeOffset = new THREE.Vector3(0.12, -0.06, -0.07);
+      const probeParts = [
+        clone.getObjectByName("Photodiode_panel_v2"),
+        clone.getObjectByName("Photodiode_panel_cover_v2"),
+      ];
+
+      for (const part of probeParts) {
+        part?.position.add(probeOffset);
       }
     }
 

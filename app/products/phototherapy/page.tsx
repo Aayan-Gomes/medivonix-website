@@ -95,8 +95,8 @@ export default function Phototherapy() {
           </h2>
           <p className="mt-4 max-w-3xl leading-7 text-slate-600">
             Rotate and zoom the supplied CAD model to inspect the white therapy
-            panel, black display enclosure, optical probe, support structure,
-            and independent handheld bilirubinometer.
+            panel, black display enclosure, repositioned optical probe, and
+            support structure.
           </p>
           <div className="mt-8">
             <ModelViewer

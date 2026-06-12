@@ -8,7 +8,7 @@ export type Product = {
   imageAlt?: string;
   modelPath?: string;
   modelRotation?: [number, number, number];
-  modelFocus?: "all" | "handheld";
+  modelFocus?: "all" | "phototherapy" | "handheld";
   mediaStatus?: string;
   status: string;
   href: string;
@@ -57,7 +57,7 @@ export const products: Product[] = [
       "The phototherapy machine concept brings together a white treatment panel, a separate black display and control module, and a compact optical probe designed around four green LEDs and four photodiodes for ADC-based signal acquisition.",
     modelPath: "/models/phototherapy-bilirubinometer.glb",
     modelRotation: [-1.18, 3.22, 0.12],
-    modelFocus: "all",
+    modelFocus: "phototherapy",
     mediaStatus: "Interactive 3D prototype available",
     status: "Prototype development",
     href: "/products/phototherapy",
