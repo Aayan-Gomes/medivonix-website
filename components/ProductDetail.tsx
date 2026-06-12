@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Product } from "../app/data/products";
+import ModelViewer from "./ModelViewer";
 
 type ProductDetailProps = {
   product: Product;
@@ -33,7 +34,24 @@ export default function ProductDetail({ product, children }: ProductDetailProps)
             </div>
           </div>
 
-          {product.image && product.imageAlt ? (
+          {product.modelPath ? (
+            <div className="relative min-h-[360px] overflow-hidden rounded-lg border border-slate-200 bg-slate-100">
+              <ModelViewer
+                variant="preview"
+                modelPath={product.modelPath}
+                modelRotation={product.modelRotation}
+                modelFocus={product.modelFocus}
+              />
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/80 to-transparent p-5 text-white">
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-teal-200">
+                  Interactive assembly
+                </p>
+                <p className="mt-2 font-bold">
+                  Full 3D controls are available below.
+                </p>
+              </div>
+            </div>
+          ) : product.image && product.imageAlt ? (
             <div className="relative min-h-[360px] overflow-hidden rounded-lg border border-slate-200 bg-slate-100">
               <Image
                 src={product.image}

@@ -44,9 +44,10 @@ export default function Home() {
               </h1>
               <p className="mt-7 max-w-2xl text-lg leading-8 text-slate-600">
                 We develop practical medical technologies for neonatal care,
-                blood transfusion support, phototherapy, and emergency response
-                with a focus on affordability, safety, and deployment in real
-                clinical environments.
+                blood transfusion support, phototherapy, optical bilirubin
+                measurement, and emergency response with a focus on
+                affordability, safety, and deployment in real clinical
+                environments.
               </p>
 
               <div className="mt-9 flex flex-col gap-3 sm:flex-row">
@@ -66,7 +67,7 @@ export default function Home() {
 
               <div className="mt-12 grid max-w-2xl grid-cols-3 gap-4 border-t border-slate-200 pt-8">
                 {[
-                  ["3", "Device programs"],
+                  ["4", "Device programs"],
                   ["NICU", "Primary care focus"],
                   ["Kolkata", "Built in India"],
                 ].map(([value, label]) => (
@@ -147,18 +148,28 @@ export default function Home() {
             </div>
             <p className="max-w-2xl text-base leading-7 text-slate-600">
               A connected pipeline of medical device concepts focused on
-              neonatal care, transfusion support, and emergency readiness.
+              neonatal care, transfusion support, optical measurement, and
+              emergency readiness.
             </p>
           </div>
 
-          <div className="mt-12 grid gap-7 lg:grid-cols-3">
+          <div className="mt-12 grid gap-7 md:grid-cols-2">
             {products.map((product) => (
               <Link
                 key={product.slug}
                 href={product.href}
                 className="group overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
               >
-                {product.image && product.imageAlt ? (
+                {product.modelPath ? (
+                  <div className="pointer-events-none relative aspect-[16/10] overflow-hidden bg-slate-100">
+                    <ModelViewer
+                      variant="card"
+                      modelPath={product.modelPath}
+                      modelRotation={product.modelRotation}
+                      modelFocus={product.modelFocus}
+                    />
+                  </div>
+                ) : product.image && product.imageAlt ? (
                   <div className="relative aspect-[16/10] overflow-hidden bg-slate-100">
                     <Image
                       src={product.image}

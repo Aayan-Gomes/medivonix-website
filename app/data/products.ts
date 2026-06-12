@@ -6,6 +6,9 @@ export type Product = {
   description: string;
   image?: string;
   imageAlt?: string;
+  modelPath?: string;
+  modelRotation?: [number, number, number];
+  modelFocus?: "all" | "handheld";
   mediaStatus?: string;
   status: string;
   href: string;
@@ -47,28 +50,61 @@ export const products: Product[] = [
   {
     slug: "phototherapy",
     name: "Phototherapy Machine",
-    eyebrow: "Neonatal jaundice treatment",
+    eyebrow: "Neonatal jaundice treatment and optical monitoring",
     summary:
-      "Phototherapy technology concept for optimized therapeutic illumination and dependable neonatal care.",
+      "A neonatal phototherapy platform combining a white therapy panel, a dedicated display module, and an optical body probe for treatment-side data acquisition.",
     description:
-      "A focused neonatal phototherapy platform designed to support effective jaundice treatment with uniform light delivery, practical handling, and serviceable components for everyday hospital use.",
-    mediaStatus: "Product imagery coming soon",
-    status: "Concept validation",
+      "The phototherapy machine concept brings together a white treatment panel, a separate black display and control module, and a compact optical probe designed around four green LEDs and four photodiodes for ADC-based signal acquisition.",
+    modelPath: "/models/phototherapy-bilirubinometer.glb",
+    modelRotation: [-1.18, 3.22, 0.12],
+    modelFocus: "all",
+    mediaStatus: "Interactive 3D prototype available",
+    status: "Prototype development",
     href: "/products/phototherapy",
     highlights: [
-      "Optimized illumination for neonatal jaundice therapy",
-      "Compact form factor for ward and NICU environments",
-      "Built for maintainability and accessible ownership costs",
+      "White phototherapy panel designed for neonatal treatment coverage",
+      "Separate display module for treatment information and system interaction",
+      "Optical probe concept with four green LEDs and four photodiodes",
     ],
     specs: [
       { label: "Care area", value: "Neonatal care" },
-      { label: "Focus", value: "Therapeutic illumination" },
-      { label: "Design goal", value: "Consistent treatment coverage" },
+      { label: "Sensing", value: "4 green LEDs + 4 photodiodes" },
+      { label: "Signal output", value: "ADC-based optical readings" },
     ],
     applications: [
       "Neonatal jaundice treatment",
-      "Maternity and pediatric wards",
-      "Resource-conscious care centers",
+      "Treatment-side optical data acquisition",
+      "NICU, maternity, and pediatric wards",
+    ],
+  },
+  {
+    slug: "bilirubinometer",
+    name: "Handheld Bilirubinometer",
+    eyebrow: "Independent bilirubin screening concept",
+    summary:
+      "A compact handheld optical measurement device designed to work independently and present bilirubin-related readings on its integrated screen.",
+    description:
+      "The handheld bilirubinometer is an independent prototype concept that combines a compact optical sensing interface, onboard electronics, and an integrated display for immediate bilirubin-related data presentation.",
+    modelPath: "/models/phototherapy-bilirubinometer.glb",
+    modelRotation: [-1.18, 0.08, -0.12],
+    modelFocus: "handheld",
+    mediaStatus: "Interactive 3D prototype available",
+    status: "Prototype development",
+    href: "/products/bilirubinometer",
+    highlights: [
+      "Handheld form factor intended for independent operation",
+      "Integrated screen for immediate reading visibility",
+      "Optical sensing architecture designed for bilirubin-related data acquisition",
+    ],
+    specs: [
+      { label: "Format", value: "Handheld optical instrument" },
+      { label: "Operation", value: "Independent measurement concept" },
+      { label: "Interface", value: "Integrated display" },
+    ],
+    applications: [
+      "Point-of-care bilirubin screening research",
+      "Neonatal monitoring workflow development",
+      "Bench testing and optical calibration studies",
     ],
   },
   {

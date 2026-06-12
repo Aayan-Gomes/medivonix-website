@@ -19,13 +19,19 @@ import type { ReactNode } from "react";
 import * as THREE from "three";
 
 type ModelViewerProps = {
-  variant?: "product" | "hero";
+  variant?: "product" | "hero" | "preview" | "card";
   allowInsideView?: boolean;
+  modelPath?: string;
+  modelRotation?: [number, number, number];
+  modelFocus?: "all" | "handheld";
 };
 
 type MachineProps = {
   animateAssembly?: boolean;
   insideView?: boolean;
+  modelPath: string;
+  modelRotation: [number, number, number];
+  modelFocus: "all" | "handheld";
 };
 
 const coverMeshNames = new Set(["Node1", "Node4", "Node5"]);
@@ -55,9 +61,27 @@ function getMaterialColor(material: THREE.Material | undefined) {
   return new THREE.Color("#d8dde2");
 }
 
-function Machine({ animateAssembly = false, insideView = false }: MachineProps) {
-  const { scene } = useGLTF("/models/exchange-machine.glb");
-  const model = useMemo(() => scene.clone(true), [scene]);
+function Machine({
+  animateAssembly = false,
+  insideView = false,
+  modelPath,
+  modelRotation,
+  modelFocus,
+}: MachineProps) {
+  const { scene } = useGLTF(modelPath);
+  const model = useMemo(() => {
+    const clone = scene.clone(true);
+
+    if (modelFocus === "handheld") {
+      for (const child of [...clone.children]) {
+        if (child.name !== "Photodiode_device_assembly_v3") {
+          clone.remove(child);
+        }
+      }
+    }
+
+    return clone;
+  }, [modelFocus, scene]);
 
   useLayoutEffect(() => {
     const materialCache = new Map<string, THREE.MeshStandardMaterial>();
@@ -152,7 +176,7 @@ function Machine({ animateAssembly = false, insideView = false }: MachineProps) 
 
   return (
     <Center>
-      <group rotation={productModelRotation}>
+      <group rotation={modelRotation}>
         <primitive object={model} />
       </group>
     </Center>
@@ -186,14 +210,25 @@ function MuseumRig({
 export default function ModelViewer({
   variant = "product",
   allowInsideView = false,
+  modelPath = "/models/exchange-machine.glb",
+  modelRotation = productModelRotation,
+  modelFocus = "all",
 }: ModelViewerProps) {
   const isHero = variant === "hero";
+  const isPreview = variant === "preview";
+  const isCard = variant === "card";
   const [insideView, setInsideView] = useState(false);
 
   return (
     <div
       className={`relative w-full overflow-hidden rounded-lg bg-slate-100 ${
-        isHero ? "h-full min-h-[440px]" : "h-[700px]"
+        isHero
+          ? "h-full min-h-[440px]"
+          : isCard
+            ? "h-full min-h-0"
+          : isPreview
+            ? "h-full min-h-[360px]"
+            : "h-[700px]"
       }`}
     >
       {allowInsideView && (
@@ -252,15 +287,21 @@ export default function ModelViewer({
             fit
             clip
             observe
-            margin={isHero ? 2.35 : 2.05}
+            margin={isHero ? 2.35 : isPreview || isCard ? 1.25 : 1.45}
           >
             <MuseumRig enabled={isHero}>
-              <Machine animateAssembly={isHero} insideView={insideView} />
+              <Machine
+                animateAssembly={isHero}
+                insideView={insideView}
+                modelPath={modelPath}
+                modelRotation={modelRotation}
+                modelFocus={modelFocus}
+              />
             </MuseumRig>
           </Bounds>
         </Suspense>
 
-        {!isHero && (
+        {!isHero && !isPreview && !isCard && (
           <OrbitControls
             makeDefault
             enablePan={false}
