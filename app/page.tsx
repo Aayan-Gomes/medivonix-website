@@ -27,6 +27,14 @@ const process = [
   "Validation planning",
 ];
 
+const timeline = [
+  { year: "2024", event: "Research Begins" },
+  { year: "2025", event: "Medivonix Founded" },
+  { year: "2025", event: "BiliDrop Development" },
+  { year: "2025", event: "Website Launch" },
+  { year: "Future", event: "Clinical Validation & Deployment" },
+];
+
 export default function Home() {
   return (
     <>
@@ -96,7 +104,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section id="company" className="mx-auto max-w-7xl px-5 py-20 sm:px-8">
+        <section className="mx-auto max-w-7xl px-5 py-20 sm:px-8">
           <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
             <div>
               <p className="text-sm font-bold uppercase tracking-[0.2em] text-teal-700">
@@ -118,6 +126,12 @@ export default function Home() {
                 engineering so promising device ideas can move toward practical
                 healthcare impact.
               </p>
+              <Link
+                href="/company"
+                className="inline-flex font-bold text-teal-700 hover:text-teal-900"
+              >
+                Explore the company
+              </Link>
             </div>
           </div>
         </section>
@@ -202,7 +216,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section id="research" className="border-y border-slate-200 bg-slate-50 py-20">
+        <section className="border-y border-slate-200 bg-slate-50 py-20">
           <div className="mx-auto grid max-w-7xl gap-12 px-5 sm:px-8 lg:grid-cols-[1fr_1.1fr]">
             <div>
               <p className="text-sm font-bold uppercase tracking-[0.2em] text-teal-700">
@@ -216,6 +230,12 @@ export default function Home() {
                 affordability visible from the first sketch through validation
                 planning.
               </p>
+              <Link
+                href="/research-development"
+                className="mt-7 inline-flex font-bold text-teal-700 hover:text-teal-900"
+              >
+                Explore research and development
+              </Link>
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               {process.map((step, index) => (
@@ -227,6 +247,43 @@ export default function Home() {
                     0{index + 1}
                   </p>
                   <h3 className="mt-4 text-xl font-black">{step}</h3>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="bg-white py-20">
+          <div className="mx-auto max-w-7xl px-5 sm:px-8">
+            <div className="max-w-3xl">
+              <p className="text-sm font-bold uppercase tracking-[0.2em] text-teal-700">
+                Company journey
+              </p>
+              <h2 className="mt-4 text-3xl font-black text-slate-950 sm:text-5xl">
+                From early research to future clinical deployment.
+              </h2>
+            </div>
+
+            <div className="mt-12 grid gap-0 lg:grid-cols-5">
+              {timeline.map((milestone, index) => (
+                <div
+                  key={`${milestone.year}-${milestone.event}`}
+                  className="relative grid grid-cols-[3rem_1fr] gap-4 pb-8 lg:block lg:pb-0 lg:pr-6"
+                >
+                  <div className="relative flex justify-center lg:mb-6 lg:block">
+                    <span className="relative z-10 mt-1 h-4 w-4 rounded-full border-4 border-white bg-teal-600 ring-2 ring-teal-600 lg:mt-0 lg:block" />
+                    {index < timeline.length - 1 && (
+                      <span className="absolute bottom-[-2rem] top-5 w-px bg-slate-300 lg:bottom-auto lg:left-4 lg:right-[-1.5rem] lg:top-2 lg:h-px lg:w-auto" />
+                    )}
+                  </div>
+                  <div>
+                    <p className="text-sm font-black uppercase tracking-[0.16em] text-teal-700">
+                      {milestone.year}
+                    </p>
+                    <h3 className="mt-2 text-xl font-black text-slate-950">
+                      {milestone.event}
+                    </h3>
+                  </div>
                 </div>
               ))}
             </div>

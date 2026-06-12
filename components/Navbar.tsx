@@ -5,8 +5,8 @@ export default function Navbar() {
   const links = [
     { href: "/#home", label: "Home" },
     { href: "/#products", label: "Products" },
-    { href: "/#research", label: "Research" },
-    { href: "/#company", label: "Company" },
+    { href: "/research-development", label: "R&D" },
+    { href: "/company", label: "Company" },
     { href: "/#contact", label: "Contact" },
   ];
 
